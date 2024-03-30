@@ -1,6 +1,7 @@
 import mysql.connector
 from flask import Flask, render_template, request, redirect, session, url_for
 import re
+import os 
 
 app = Flask(__name__)
 app.secret_key = "your secret key"
@@ -38,7 +39,12 @@ def al():
 
 @app.route("/alogin", methods=["GET", "POST"])
 def alogin():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     msg = ''
     if request.method == 'POST':
@@ -58,7 +64,12 @@ def alogin():
 
 @app.route("/admin")
 def admin():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from fruit"
     cur.execute(sql)
@@ -68,7 +79,12 @@ def admin():
 
 @app.route("/ManageSellers")
 def ms():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from seller"
     cur.execute(sql)
@@ -83,7 +99,12 @@ def mp():
 
 @app.route("/afruits")
 def afruits():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from fruit"
     cur.execute(sql)
@@ -93,7 +114,12 @@ def afruits():
 
 @app.route("/avegetables")
 def avegetables():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from vegetables"
     cur.execute(sql)
@@ -103,7 +129,12 @@ def avegetables():
 
 @app.route("/ahomemade")
 def ahomemade():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from handmade"
     cur.execute(sql)
@@ -113,7 +144,12 @@ def ahomemade():
 
 @app.route("/ahandcraft")
 def ahandcraft():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from handcraft"
     cur.execute(sql)
@@ -124,7 +160,12 @@ def ahandcraft():
 @app.route('/fruitsdelete', methods=["POST", "GET"])
 def fruitsdelete():
     id=request.args.get("id")
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     cursor.execute("delete FROM fruit WHERE fruit_id='"+id+"'")
     con.commit()
@@ -135,7 +176,12 @@ def fruitsdelete():
 @app.route('/vegetablesdelete', methods=["POST", "GET"])
 def vegetablesdelete():
     id=request.args.get("id")
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     cursor.execute("delete FROM vegetables WHERE vegetable_id='"+id+"'")
     con.commit()
@@ -146,7 +192,12 @@ def vegetablesdelete():
 @app.route('/homemadedelete', methods=["POST", "GET"])
 def homemadedelete():
     id=request.args.get("id")
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     cursor.execute("delete FROM handmade WHERE handmade_id='"+id+"'")
     con.commit()
@@ -157,7 +208,12 @@ def homemadedelete():
 @app.route('/handcraftdelete', methods=["POST", "GET"])
 def handcraftdelete():
     id=request.args.get("id")
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     cursor.execute("delete FROM handcraft WHERE handcraft_id='"+id+"'")
     con.commit()
@@ -168,7 +224,12 @@ def handcraftdelete():
 @app.route('/sellerdelete', methods=["POST", "GET"])
 def sellerdelete():
     id=request.args.get("id")
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     cursor.execute("delete FROM seller WHERE seller_id='"+id+"'")
     con.commit()
@@ -183,7 +244,12 @@ def sl():
 
 @app.route("/Productdetails")
 def pd():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from fruit"
     cur.execute(sql)
@@ -193,7 +259,12 @@ def pd():
 
 @app.route("/addproducts", methods=['GET', 'POST'])
 def addproducts():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     if request.method == 'POST':
         fruit_name = request.form['fruit_name']
@@ -210,7 +281,12 @@ def addproducts():
 
 @app.route("/SellerAccInfo", methods=["POST", "GET"])
 def sellerinfo():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sellername = request.form['sellername']
     password = request.form['password']
@@ -225,7 +301,12 @@ def sellerinfo():
 
 @app.route("/sorder")
 def sorder():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from order"
     cur.execute(sql)
@@ -241,7 +322,12 @@ def contactus():
 
 @app.route("/slogin", methods=["GET", "POST"])
 def slogin():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     msg = ''
     if request.method == 'POST':
@@ -267,7 +353,12 @@ def seller():
 @app.route('/productsdelete', methods=["POST", "GET"])
 def productsdelete():
     id = request.args.get("id")
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     cursor.execute("delete FROM fruit WHERE fruit_id='"+id+"'")
     con.commit()
@@ -277,7 +368,12 @@ def productsdelete():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     msg = ''
     if request.method == 'POST':
@@ -297,7 +393,12 @@ def login():
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor = con.cursor()
     msg = ''
     if request.method == 'POST':
@@ -317,7 +418,12 @@ def registration():
 
 @app.route("/fruits")
 def jeniya2():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from fruit"
     cur.execute(sql)
@@ -327,7 +433,12 @@ def jeniya2():
 
 @app.route("/vegetables")
 def jeniya3():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from vegetables"
     cur.execute(sql)
@@ -337,7 +448,12 @@ def jeniya3():
 
 @app.route("/homemade")
 def jeniya4():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from handmade"
     cur.execute(sql)
@@ -347,7 +463,12 @@ def jeniya4():
 
 @app.route("/handcraft")
 def jeniya5():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from handcraft"
     cur.execute(sql)
@@ -357,7 +478,12 @@ def jeniya5():
 
 @app.route("/addtocart")
 def atd():
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cur = con.cursor()
     sql = "select * from cart"
     cur.execute(sql)
@@ -368,7 +494,12 @@ def atd():
 @app.route("/addtocartSave", methods=["POST", "GET"])
 def addtocart():
     id = request.args.get("id")
-    con = mysql.connector.Connect(user="root", database="jeniyadb")
+    con = mysql.connector.connect(
+        host='localhost',
+        user='root',  # Replace 'root' with the appropriate username
+        password='Conamieas44',  # Replace 'your_password' with the correct password
+        database='jeniyadb'
+    )
     cursor1 = con.cursor1()
     cursor1.execute("SELECT* FROM fruit where product_id='"+id+"'")
     record = cursor1.fetchone()
