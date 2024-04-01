@@ -4,14 +4,16 @@ import re
 import os 
 import logging
 import json
+import traceback
 
 app = Flask(__name__)
-app.secret_key = "your secret key"
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'd3d44d57d0125f119f14f7633652d5d0')
 
-import os
-import json
+
+
 import time
 from functools import wraps
+
 # from kafka import KafkaProducer
 # from confluent_kafka.admin import AdminClient, NewTopic
 
@@ -155,9 +157,7 @@ def log_request_info():
     except Exception as e:
         print(f"Error logging request info: {e}")
 
-@app.route('/')
-def home():
-    return jsonify({"message": "Hello, World!"})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
