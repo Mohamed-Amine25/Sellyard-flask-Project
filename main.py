@@ -2,9 +2,165 @@ import mysql.connector
 from flask import Flask, render_template, request, redirect, session, url_for
 import re
 import os 
+import logging
+import json
 
 app = Flask(__name__)
 app.secret_key = "your secret key"
+
+import os
+import json
+import time
+from functools import wraps
+# from kafka import KafkaProducer
+# from confluent_kafka.admin import AdminClient, NewTopic
+
+#  # Kafka producer setup
+# producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+#                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
+# def invocation(func):
+#     @wraps(func)
+#     def wrapper(*args, **kwargs):
+
+#         print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+#         print("Sensor Microagent Launched!")
+#         print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+
+#         # Retrieve system properties (environment variables)
+#         swid = os.getenv("swid", 1)
+#         cxid = os.getenv("cxid", 1)
+
+#         # Construct the Kafka topic
+#         BASE_TOPIC = "INV"  # Set your base topic here
+#         appTopic = f"{BASE_TOPIC}/{swid}_{cxid}"
+
+#         data = {
+#             "swid": swid,
+#             "cxid": cxid,
+#             "callStackId": None,  # Set this if you have a call stack identifier
+#             "fullyQualifiedMethodName": f"{func.__module__}.{func.__qualname__}",
+#             "params": args,
+#             "result": None,
+#             "_returns": False,
+#             "_returnsString": False,
+#             "_returnsNumber": False,
+#             "exception": False,
+#             "startTime": None,
+#             "endTime": None,
+#             "executionTime": None,
+#             "tag": None,  # Set this if you have a tag
+#             "label": None  # Set this if you have a label
+#         }
+
+#         start_time = int(time.time() * 1000)
+#         data["startTime"] = start_time
+        
+#         try:
+#             result = func(*args, **kwargs)
+#             data["result"] = result
+#             data["_returns"] = result is not None
+#             data["_returnsString"] = isinstance(result, str)
+#             data["_returnsNumber"] = isinstance(result, (int, float))
+#         except Exception as e:
+#             data["exception"] = True
+#             data["result"] = str(e)
+#             print(f"An exception occurred in {func.__name__}: {e}")
+#         finally:
+#             end_time = int(time.time() * 1000)
+#             data["endTime"] = end_time
+#             data["executionTime"] = end_time - start_time
+            
+
+#             # Step 3: Define the new topic
+#             topic_list = [NewTopic(appTopic, num_partitions=3, replication_factor=1)]
+#             # Adjust "my_new_topic", num_partitions, and replication_factor as needed
+
+#             # Send the data to the constructed Kafka topic
+#             print(f"Sending data to Kafka topic: {appTopic}")
+#             producer.send(appTopic, value=data)
+#             producer.flush()
+#             print("Data sent successfully!")
+            
+#             if data["exception"]:
+#                 raise
+        
+#         return result
+#     return wrapper
+
+# Don't forget to properly handle Kafka cleanup after usage, e.g.:
+# producer.close(timeout=60)
+
+
+
+# class JsonFormatter(logging.Formatter):
+#     def format(self, record):
+#         log_record = {
+
+#             "callStackId": None,  # Set this if you have a call stack identifier
+#             "fullyQualifiedMethodName": None,
+#             "params": None,
+#             "result": None,
+#             "_returns": False,
+#             "_returnsString": False,
+#             "_returnsNumber": False,
+#             "exception": False,
+#             "startTime": None,
+#             "endTime": None,
+#             "executionTime": None,
+#             "tag": None,  # Set this if you have a tag
+#             "label": None  # Set this if you have a label
+#         }
+#         if record.exc_info:
+#             log_record['exception'] = self.formatException(record.exc_info)
+#         return json.dumps(log_record)
+    
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format='%(swid)s - %(cxid)s - %(callStackId)s - %(fullyQualifiedMethodName)s - %(params)s - %(result)s - %(_returns)s - %(_returnsString)s - %(_returnsNumber)s - %(exception)s - %(startTime)s - %(endTime)s - %(executionTime)s - %(tag)s - %(label)s',
+#     handlers=[
+#         logging.FileHandler("django_app_json.log"),
+#         logging.StreamHandler()
+#     ]
+# )
+
+# # Get the logger and set the formatter to the JSON formatter for the file handler
+# logger = logging.getLogger()
+# file_handler = logger.handlers[0]  # Assuming the first handler is the FileHandler
+# file_handler.setFormatter(JsonFormatter())
+
+# Function to capture and log request details
+@app.before_request
+def log_request_info():
+    try:
+        # Capturing the call stack
+        call_stack = traceback.format_stack()
+
+        # Simplifying the call stack for readability
+        # You might want to customize this part based on your needs
+        simplified_stack = [line.strip() for line in call_stack]
+
+        # Capturing request method and content
+        request_info = {
+            "call_stack": simplified_stack,
+            "method": request.method,
+            "data": request.get_data(as_text=True)  # or request.json if expecting JSON
+        }
+
+        # Write information to a JSON file
+        with open("request_logs.json", "a") as file:
+            json.dump(request_info, file)
+            file.write("\n")  # Newline for separating entries
+
+    except Exception as e:
+        print(f"Error logging request info: {e}")
+
+@app.route('/')
+def home():
+    return jsonify({"message": "Hello, World!"})
+
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 @app.route("/")
@@ -38,11 +194,12 @@ def al():
 
 
 @app.route("/alogin", methods=["GET", "POST"])
+#@invocation
 def alogin():
     con = mysql.connector.connect(
         host='localhost',
         user='root',  # Replace 'root' with the appropriate username
-        password='Conamieas44',  # Replace 'your_password' with the correct password
+        password='Conamieas44',  
         database='jeniyadb'
     )
     cursor = con.cursor()
@@ -63,6 +220,7 @@ def alogin():
 
 
 @app.route("/admin")
+#@invocation
 def admin():
     con = mysql.connector.connect(
         host='localhost',
@@ -78,6 +236,7 @@ def admin():
 
 
 @app.route("/ManageSellers")
+
 def ms():
     con = mysql.connector.connect(
         host='localhost',
@@ -93,6 +252,7 @@ def ms():
 
 
 @app.route("/ManageProducts")
+
 def mp():
     return render_template('ManageProducts.html')
 
@@ -113,6 +273,7 @@ def afruits():
 
 
 @app.route("/avegetables")
+#@invocation
 def avegetables():
     con = mysql.connector.connect(
         host='localhost',
@@ -158,6 +319,7 @@ def ahandcraft():
 
 
 @app.route('/fruitsdelete', methods=["POST", "GET"])
+#@invocation
 def fruitsdelete():
     id=request.args.get("id")
     con = mysql.connector.connect(
@@ -174,6 +336,7 @@ def fruitsdelete():
 
 
 @app.route('/vegetablesdelete', methods=["POST", "GET"])
+#@invocation
 def vegetablesdelete():
     id=request.args.get("id")
     con = mysql.connector.connect(
@@ -190,6 +353,7 @@ def vegetablesdelete():
 
 
 @app.route('/homemadedelete', methods=["POST", "GET"])
+#@invocation
 def homemadedelete():
     id=request.args.get("id")
     con = mysql.connector.connect(
@@ -206,6 +370,7 @@ def homemadedelete():
 
 
 @app.route('/handcraftdelete', methods=["POST", "GET"])
+#@invocation
 def handcraftdelete():
     id=request.args.get("id")
     con = mysql.connector.connect(
@@ -222,6 +387,7 @@ def handcraftdelete():
 
 
 @app.route('/sellerdelete', methods=["POST", "GET"])
+#@invocation
 def sellerdelete():
     id=request.args.get("id")
     con = mysql.connector.connect(
@@ -258,6 +424,7 @@ def pd():
 
 
 @app.route("/addproducts", methods=['GET', 'POST'])
+#@invocation
 def addproducts():
     con = mysql.connector.connect(
         host='localhost',
@@ -278,7 +445,7 @@ def addproducts():
     else:
         return render_template("addproducts.html")
 
-
+#@invocation
 @app.route("/SellerAccInfo", methods=["POST", "GET"])
 def sellerinfo():
     con = mysql.connector.connect(
@@ -321,6 +488,7 @@ def contactus():
 
 
 @app.route("/slogin", methods=["GET", "POST"])
+#@invocation
 def slogin():
     con = mysql.connector.connect(
         host='localhost',
@@ -351,6 +519,7 @@ def seller():
 
 
 @app.route('/productsdelete', methods=["POST", "GET"])
+#@invocation
 def productsdelete():
     id = request.args.get("id")
     con = mysql.connector.connect(
@@ -367,6 +536,7 @@ def productsdelete():
 
 
 @app.route("/login", methods=["GET", "POST"])
+#@invocation
 def login():
     con = mysql.connector.connect(
         host='localhost',
@@ -392,36 +562,64 @@ def login():
 
 
 @app.route('/registration', methods=['GET', 'POST'])
+#@invocation
 def registration():
     con = mysql.connector.connect(
         host='localhost',
         user='root',  # Replace 'root' with the appropriate username
-        password='Conamieas44',  # Replace 'your_password' with the correct password
+        password='Conamieas44',  
         database='jeniyadb'
     )
     cursor = con.cursor()
     msg = ''
+    
+    # Log the request method
+    logging.info(f"Request method: {request.method}")
+    
     if request.method == 'POST':
+        # Extract form data
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
         firstname = request.form['firstname']
         lastname = request.form['lastname']
-        cursor.execute("INSERT INTO user  (username, password, email, firstname, lastname) VALUES ('" + username + "', '" + password + "','" + email + "','" + firstname + "', '" + lastname + "')")
+        
+        # Log extracted form data
+        #logging.info(f"Form data - Username: {username}, Password: {password}, Email: {email}, Firstname: {firstname}, Lastname: {lastname}")
+        params = {
+            "username": username,
+            "password": password,
+            "email": email,
+            "firstname": firstname,
+            "lastname": lastname
+        }
+        #logger.info(registration.__func__.__name__  ,extra={'params':params})
+        # Execute parameterized query to prevent SQL injection
+        query = "INSERT INTO user (username, password, email, firstname, lastname) VALUES (%s, %s, %s, %s, %s)"
+        cursor.execute(query, (username, password, email, firstname, lastname))
+        
         con.commit()
+        
         msg = 'You have successfully registered !'
+        
+        # Log successful registration
+        # logging.info(msg)
+        
         return render_template('index.html', msg=msg)
     else:
         msg = 'Please fill out the form !'
+        
+        # Log form not filled
+        # logging.info(msg)
+    
     return render_template('registration.html', msg=msg)
-
 
 @app.route("/fruits")
 def jeniya2():
     con = mysql.connector.connect(
         host='localhost',
         user='root',  # Replace 'root' with the appropriate username
-        password='Conamieas44',  # Replace 'your_password' with the correct password
+        password='Conamieas44',  
         database='jeniyadb'
     )
     cur = con.cursor()
@@ -497,14 +695,14 @@ def addtocart():
     con = mysql.connector.connect(
         host='localhost',
         user='root',  # Replace 'root' with the appropriate username
-        password='Conamieas44',  # Replace 'your_password' with the correct password
+        password='Conamieas44',  
         database='jeniyadb'
     )
     cursor1 = con.cursor1()
-    cursor1.execute("SELECT* FROM fruit where product_id='"+id+"'")
+    cursor1.execute("SELECT* FROM fruit where fruit_id='"+id+"'")
     record = cursor1.fetchone()
     cursor = con.cursor()
-    cursor.execute("insert into cart values('44', '"+session['id']+"', '"+record[0]+"','"+record[2]+"','2','"+record[4]+"')")
+    cursor.execute("insert into cart(user_id , fruit_id , fruit_weight, quantity , fruit_desc ) values('44', '"+session['id']+"', '"+record[0]+"','"+record[2]+"','2','"+record[4]+"')")
     con.commit()
     return render_template("addtocart.html")
 
